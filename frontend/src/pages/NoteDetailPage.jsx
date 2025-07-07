@@ -1,13 +1,12 @@
-import { mockData } from "@/data/mockNotes";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { ArrowLeft, Edit, Eye, Save } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-const NoteDetailPage = () => {
+const NoteDetailPage = ({ notes, setNotes }) => {
   const { id } = useParams();
-  const note = mockData.find((note) => note.id === parseInt(id));
+  const note = notes.find((note) => note.id === parseInt(id));
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(note.title);
@@ -15,24 +14,23 @@ const NoteDetailPage = () => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showDiscardDialog, setShowDiscardDialog] = useState(false);
 
-
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
   const handleContentChange = (e) => setContent(e.target.value);
 
   const handleSave = () => {
-    const noteIndex = mockData.findIndex((note) => note.id === parseInt(id));
+    const noteIndex = notes.findIndex((note) => note.id === parseInt(id));
 
-    if(noteIndex !== -1){
-      mockData[noteIndex].title = title;
-      mockData[noteIndex].content = content;
+    if (noteIndex !== -1) {
+      notes[noteIndex].title = title;
+      notes[noteIndex].content = content;
     }
-    
+
     setIsEditing(false);
     setShowDiscardDialog(false);
     setShowSaveDialog(false);
-  } 
+  };
 
   const handleDiscard = () => {
     setTitle(note.title);
@@ -40,12 +38,12 @@ const NoteDetailPage = () => {
     setIsEditing(false);
     setShowDiscardDialog(false);
     setShowSaveDialog(false);
-  }
+  };
 
   useEffect(() => {
-      if(note && note.title === "" && note.content === ""){
-        setIsEditing(true)
-      }
+    if (note && note.title === "" && note.content === "") {
+      setIsEditing(true);
+    }
   }, [note]);
 
   if (!note) {
@@ -73,14 +71,14 @@ const NoteDetailPage = () => {
               // Add your save logic here
               onClick={() => setShowDiscardDialog(true)}
             >
-              <Eye  className="h-6 w-6" />
+              <Eye className="h-6 w-6" />
             </button>
             <button
               className="p-3 bg-[#3B3B3B] rounded-lg hover:bg-slate-600"
               // Add your cancel logic here
               onClick={() => setShowSaveDialog(true)}
             >
-              <Save  className="h-6 w-6" />
+              <Save className="h-6 w-6" />
             </button>
           </div>
         ) : (

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Search, Info, Plus, Trash2, Check } from "lucide-react";
-import { mockData as mockNotes, noteColors } from "../data/mockNotes.js";
+import { noteColors } from "../data/mockNotes.js";
 import { Link, useNavigate } from "react-router-dom";
 
-const HomePage = () => {
+const HomePage = ({notes, setNotes}) => {
   const navigate = useNavigate();
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedNotes, setSelectedNotes] = useState([]);
@@ -16,7 +16,7 @@ const HomePage = () => {
       color: noteColors[Math.floor(Math.random() * noteColors.length)],
     };
 
-    mockNotes.push(newNote);
+    setNotes([...notes, newNote]);
 
     navigate(`/note/${newNote.id}`);
   };
@@ -36,10 +36,10 @@ const HomePage = () => {
   };
 
   const handleDeleteSelected = () => {
-    const updatedNotes = mockNotes.filter(
+    const updatedNotes = notes.filter(
       (note) => !selectedNotes.includes(note.id)
     );
-    mockNotes.splice(0, mockNotes.length, ...updatedNotes);
+    setNotes(updatedNotes);
     setSelectedNotes([]);
     setIsDeleteMode(false);
   };
@@ -75,7 +75,7 @@ const HomePage = () => {
             <Trash2 className="h-8 not-first-of-type:w-8 text-white" />
           </button>
         )}
-        {mockNotes.map((note) => {
+        {notes.map((note) => {
           const isSelected = selectedNotes.includes(note.id);
           return (
             <div key={note.id} className="relative">
