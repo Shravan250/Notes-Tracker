@@ -3,10 +3,12 @@ import { Search, Info, Plus, Trash2, Check } from "lucide-react";
 import { noteColors } from "../data/mockNotes.js";
 import { Link, useNavigate } from "react-router-dom";
 
-const HomePage = ({notes, setNotes}) => {
+const HomePage = ({ notes, setNotes }) => {
   const navigate = useNavigate();
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedNotes, setSelectedNotes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
 
   const handleAddNewNote = () => {
     const newNote = {
@@ -49,9 +51,25 @@ const HomePage = ({notes, setNotes}) => {
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Notes</h1>
         <div className="flex items-center gap-2">
-          <button className="p-3 bg-[#3B3B3B] rounded-lg hover:bg-slate-600">
-            <Search className="h-4 w-4" />
-          </button>
+          <div
+            className={`flex items-center bg-[#3B3B3B] rounded-lg p-2 transition-all duration-300 ease-in-out`}
+          >
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onBlur={() => setIsSearchVisible(false)}
+              autoFocus
+              className={`bg-transparent focus:outline-none transition-all duration-300 ease-in-out ${
+                isSearchVisible ? "w-32 ml-2" : "w-0"
+              }`}
+            />
+            <Search
+              className="h-5 w-5 cursor-pointer"
+              onClick={() => setIsSearchVisible(true)}
+            />
+          </div>
           {!isDeleteMode && (
             <button
               onClick={handleToggleDeleteMode}
