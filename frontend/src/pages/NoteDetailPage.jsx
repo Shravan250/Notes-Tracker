@@ -1,3 +1,4 @@
+import API_URL from "@/backendURL";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { ArrowLeft, Edit, Eye, Save } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -24,7 +25,7 @@ const NoteDetailPage = ({ notes, setNotes }) => {
 
   const handleSave = async () => {
     try{
-      const res = await fetch(`/api/notes/${id}`, {
+      const res = await fetch(`${API_URL}/api/notes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

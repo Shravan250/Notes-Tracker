@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, Plus, Trash2, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import InfoPopOver from "@/components/InfoPopOver.jsx";
+import API_URL from "@/backendURL";
 
 const noteColors = ["#FF9D9E", "#90F48E", "#FFF599", "#9DFFFF", "#B69CFF"];
 
@@ -20,7 +21,7 @@ const HomePage = ({ notes, setNotes }) => {
     };
 
     try {
-      const res = await fetch("/api/notes", {
+      const res = await fetch(`${API_URL}/api/notes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +59,7 @@ const HomePage = ({ notes, setNotes }) => {
   const handleDeleteSelected = async () => {
     try {
       const deletePromises = selectedNotes.map((noteId) =>
-        fetch(`/api/notes/${noteId}`, {
+        fetch(`${API_URL}/api/notes/${noteId}`, {
           method: "DELETE",
         })
       );
