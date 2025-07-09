@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Search, Info, Plus, Trash2, Check } from "lucide-react";
 import { noteColors } from "../data/mockNotes.js";
 import { Link, useNavigate } from "react-router-dom";
+import InfoPopOver from "@/components/InfoPopOver.jsx";
 
 const HomePage = ({ notes, setNotes }) => {
   const navigate = useNavigate();
@@ -46,6 +47,12 @@ const HomePage = ({ notes, setNotes }) => {
     setIsDeleteMode(false);
   };
 
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-[#252525] text-white min-h-screen p-4 max-w-[414px] mx-auto relative">
       <header className="flex justify-between items-center mb-8">
@@ -77,10 +84,8 @@ const HomePage = ({ notes, setNotes }) => {
             >
               <Trash2 className="h-4 w-4 text-white" />
             </button>
-          )}
-          <button className="p-3 bg-[#3B3B3B] rounded-lg hover:bg-slate-600">
-            <Info className="h-4 w-4" />
-          </button>
+          )} 
+          <InfoPopOver />     
         </div>
       </header>
 
@@ -93,7 +98,7 @@ const HomePage = ({ notes, setNotes }) => {
             <Trash2 className="h-8 not-first-of-type:w-8 text-white" />
           </button>
         )}
-        {notes.map((note) => {
+        {filteredNotes.map((note) => {
           const isSelected = selectedNotes.includes(note.id);
           return (
             <div key={note.id} className="relative">
