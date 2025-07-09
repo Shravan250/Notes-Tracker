@@ -9,7 +9,11 @@ dotenv.config();
 const app = express();
 
 //Middleware
-app.use(cors());
+app.use(cors({
+    origin: "https://notes-keeper-sandy.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"]
+}));
 app.use(express.json());
 
 app.use('/api/notes', noteRoutes);
