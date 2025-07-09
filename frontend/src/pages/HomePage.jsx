@@ -20,7 +20,7 @@ const HomePage = ({ notes, setNotes }) => {
     };
 
     try {
-      const res = await fetch("http://localhost:5001/api/notes", {
+      const res = await fetch("/api/notes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ const HomePage = ({ notes, setNotes }) => {
   const handleDeleteSelected = async () => {
     try {
       const deletePromises = selectedNotes.map((noteId) =>
-        fetch(`http://localhost:5001/api/notes/${noteId}`, {
+        fetch(`/api/notes/${noteId}`, {
           method: "DELETE",
         })
       );

@@ -7,7 +7,6 @@ import noteRoutes from "./routes/note.route.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5001;
 
 //Middleware
 app.use(cors());
@@ -18,10 +17,9 @@ app.use('/api/notes', noteRoutes);
 mongoose.connect(process.env.MONGO_URI)
 .then(() =>{
     console.log('MongoDB connected successfully');
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
 })
-    .catch((error) => {
+.catch((error) => {
     console.log('MongoDB connection error', error);
 })
+
+export default app;

@@ -10,7 +10,7 @@ const App = () => {
     useEffect(() => {
         const fetchNotes = async () => {
             try{
-                const res = await fetch('http://localhost:5001/api/notes')
+                const res = await fetch('/api/notes')
                 const data = await res.json()
                 setNotes(data)
             }catch(error){

@@ -24,7 +24,7 @@ const NoteDetailPage = ({ notes, setNotes }) => {
 
   const handleSave = async () => {
     try{
-      const res = await fetch(`http://localhost:5001/api/notes/${id}`, {
+      const res = await fetch(`/api/notes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
