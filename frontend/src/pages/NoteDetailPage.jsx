@@ -6,7 +6,11 @@ import { Link } from "react-router-dom";
 
 const NoteDetailPage = ({ notes, setNotes }) => {
   const { id } = useParams();
-  const note = notes.find((note) => note.id === parseInt(id));
+  const note = notes.find((note) => note._id === id);
+
+  if (!note) {
+    return <div>Loading note...</div>;
+  }
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(note.title);
@@ -14,17 +18,23 @@ const NoteDetailPage = ({ notes, setNotes }) => {
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [showDiscardDialog, setShowDiscardDialog] = useState(false);
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
+  const handleTitleChange = (e) => setTitle(e.target.value);
+
   const handleContentChange = (e) => setContent(e.target.value);
 
-  const handleSave = () => {
-    const noteIndex = notes.findIndex((note) => note.id === parseInt(id));
-
-    if (noteIndex !== -1) {
-      notes[noteIndex].title = title;
-      notes[noteIndex].content = content;
+  const handleSave = async () => {
+    try{
+      const res = await fetch(`http://localhost:5001/api/notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content }),
+      });
+      const data = await res.json();
+      setNotes(notes.map((note) => note._id === id ? data : note));
+    }catch(error){
+      console.error("Failed to update note:", error);
     }
 
     setIsEditing(false);
@@ -41,7 +51,7 @@ const NoteDetailPage = ({ notes, setNotes }) => {
   };
 
   useEffect(() => {
-    if (note && note.title === "" && note.content === "") {
+    if (note && note.title === "New Note" && note.content === " ") {
       setIsEditing(true);
     }
   }, [note]);

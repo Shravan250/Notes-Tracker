@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Search, Info, Plus, Trash2, Check } from "lucide-react";
-import { noteColors } from "../data/mockNotes.js";
+import { Search, Plus, Trash2, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import InfoPopOver from "@/components/InfoPopOver.jsx";
+
+const noteColors = ["#FF9D9E", "#90F48E", "#FFF599", "#9DFFFF", "#B69CFF"];
 
 const HomePage = ({ notes, setNotes }) => {
   const navigate = useNavigate();
@@ -11,17 +12,33 @@ const HomePage = ({ notes, setNotes }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
 
-  const handleAddNewNote = () => {
+  const handleAddNewNote = async () => {
     const newNote = {
-      id: Date.now(),
-      title: "",
-      content: "",
+      title: "New Note",
+      content: " ",
       color: noteColors[Math.floor(Math.random() * noteColors.length)],
     };
 
-    setNotes([...notes, newNote]);
+    try {
+      const res = await fetch("http://localhost:5001/api/notes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newNote),
+      });
 
-    navigate(`/note/${newNote.id}`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Backend request failed");
+      }
+
+      const data = await res.json();
+      setNotes([...notes, data]);
+      navigate(`/note/${data._id}`);
+    } catch (error) {
+      console.error("Failed to add note:", error.message);
+    }
   };
 
   const handleToggleDeleteMode = () => {
@@ -38,9 +55,20 @@ const HomePage = ({ notes, setNotes }) => {
     }
   };
 
-  const handleDeleteSelected = () => {
+  const handleDeleteSelected = async () => {
+    try {
+      const deletePromises = selectedNotes.map((noteId) =>
+        fetch(`http://localhost:5001/api/notes/${noteId}`, {
+          method: "DELETE",
+        })
+      );
+      await Promise.all(deletePromises);
+    } catch (error) {
+      console.error("Failed to delete notes:", error.message);
+    }
+
     const updatedNotes = notes.filter(
-      (note) => !selectedNotes.includes(note.id)
+      (note) => !selectedNotes.includes(note._id)
     );
     setNotes(updatedNotes);
     setSelectedNotes([]);
@@ -84,8 +112,8 @@ const HomePage = ({ notes, setNotes }) => {
             >
               <Trash2 className="h-4 w-4 text-white" />
             </button>
-          )} 
-          <InfoPopOver />     
+          )}
+          <InfoPopOver />
         </div>
       </header>
 
@@ -99,16 +127,16 @@ const HomePage = ({ notes, setNotes }) => {
           </button>
         )}
         {filteredNotes.map((note) => {
-          const isSelected = selectedNotes.includes(note.id);
+          const isSelected = selectedNotes.includes(note._id);
           return (
-            <div key={note.id} className="relative">
+            <div key={note._id} className="relative">
               {isDeleteMode ? (
                 <div
                   className={`p-4 rounded-lg cursor-pointer border-2 ${
                     isSelected ? "border-red-500" : "border-transparent"
                   }`}
                   style={{ backgroundColor: note.color }}
-                  onClick={(e) => handleSelectedNotes(note.id, e)}
+                  onClick={(e) => handleSelectedNotes(note._id, e)}
                 >
                   {isSelected && (
                     <div className="absolute top-2 right-2 bg-red-500 rounded-full p-1">
@@ -118,7 +146,7 @@ const HomePage = ({ notes, setNotes }) => {
                   <p className="text-lg text-black font-medium">{note.title}</p>
                 </div>
               ) : (
-                <Link to={`/note/${note.id}`}>
+                <Link to={`/note/${note._id}`}>
                   <div
                     className="p-4 rounded-lg"
                     style={{ backgroundColor: note.color }}
