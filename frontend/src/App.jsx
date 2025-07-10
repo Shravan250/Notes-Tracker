@@ -17,12 +17,12 @@ const App = () => {
                 console.error("Failed to fetch notes:", error);
             }
         }
-
+        
         fetchNotes()
     }, [])
     
     return (
-        <BrowserRouter basename="/noteskeeper">
+        <BrowserRouter>
             <Routes>
                 <Route path="/" element={<HomePage notes={notes} setNotes={setNotes} />} />
                 <Route path="/note/:id" element={<NoteDetailPage notes={notes} setNotes={setNotes} />} />
